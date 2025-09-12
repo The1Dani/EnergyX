@@ -1,5 +1,5 @@
 from flask import Flask
-import read_data
+import diff_data
 
 app = Flask(__name__)
 
@@ -15,6 +15,11 @@ keys = list(data.keys())
 def hello(id):
     return data[str(id)]
 
+@app.route("/diff/<id>")
+def diffs(id):
+    return diff_data.get_diffs(data[str(id)])
+
+@app.route("/")
 @app.route("/keys")
 def keys_route():
     return keys
