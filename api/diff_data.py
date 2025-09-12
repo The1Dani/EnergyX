@@ -12,6 +12,7 @@ def get_diff(d1:dict, d2:dict):
         "Import Delta": dimp,
         "Export Delta": dexp,
         "Time Delta": str(dt),
+        "Date of Second Val": str(get_time_obj_from_dict(d2))
     }
 
 def get_diffs(d: list[dict]) -> list[dict]:
