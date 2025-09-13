@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -7,41 +7,75 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import "./ProviderDashboard.css";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const ProviderDashboard = ({ setCurrentPage }) => {
   const [region, setRegion] = useState("Chișinău");
+  const [consumptionData, setConsumptionData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const regions = [
-  "Bălți",
-  "Cahul",
-  "Chișinău",
-  "Comrat",
-  "Cricova",
-  "Edineț",
-  "Florești",
-  "Hîncești",
-  "Orhei",
-  "Rezina",
-  "Soroca",
-  "Ștefan Vodă",
-  "Tiraspol",
-  "Ungheni",
-  "Vadul lui Vodă"
-]
-;
+    "Bălți",
+    "Cahul",
+    "Chișinău",
+    "Comrat",
+    "Cricova",
+    "Edineț",
+    "Florești",
+    "Hîncești",
+    "Orhei",
+    "Rezina",
+    "Soroca",
+    "Ștefan Vodă",
+    "Tiraspol",
+    "Ungheni",
+    "Vadul lui Vodă",
+  ];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // assumes backend API returns something like:
+        // { hours: ["00","01","02",...], consumption: [120, 135, ...] }
+        const response = await fetch(`http://localhost:5000/region/${region}`);
+        const result = await response.json();
+
+        setConsumptionData(result.consumption || []);
+      } catch (error) {
+        console.error("Error fetching region data:", error);
+        setConsumptionData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [region]);
+
+  const labels = Array.from({ length: 24 }, (_, i) =>
+    i.toString().padStart(2, "0")
+  );
 
   const data = {
-    labels: Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0")),
+    labels,
     datasets: [
       {
         label: `${region} Consumption (MW)`,
-        data: Array.from({ length: 24 }, () => Math.floor(Math.random() * 200) + 50),
+        data: consumptionData.length > 0 ? consumptionData : Array(24).fill(0),
         borderColor: "#004aad",
         backgroundColor: "rgba(0, 74, 173, 0.2)",
         tension: 0.3,
@@ -57,7 +91,7 @@ const ProviderDashboard = ({ setCurrentPage }) => {
       title: { display: true, text: "Hourly Consumption" },
     },
     scales: {
-      y: { title: { display: true, text: "MW" } },
+      y: { title: { display: true, text: "MW" }, beginAtZero: true },
       x: { title: { display: true, text: "Hour" } },
     },
   };
@@ -79,7 +113,11 @@ const ProviderDashboard = ({ setCurrentPage }) => {
         <div className="card dashboard-card">
           <i className="bi bi-lightning-charge display-6 text-warning"></i>
           <h5>Current Usage</h5>
-          <p className="fw-bold">245 MW</p>
+          <p className="fw-bold">
+            {consumptionData.length > 0
+              ? `${consumptionData[consumptionData.length - 1]} MW`
+              : "N/A"}
+          </p>
         </div>
 
         <div className="card dashboard-card">
@@ -91,7 +129,9 @@ const ProviderDashboard = ({ setCurrentPage }) => {
         <div className="card dashboard-card">
           <i className="bi bi-diagram-3 display-6 text-danger"></i>
           <h5>Grid Balance</h5>
-          <p className="fw-bold">Stable</p>
+          <p className="fw-bold">
+            {consumptionData.length > 0 ? "Stable" : "Unknown"}
+          </p>
         </div>
       </div>
 
@@ -103,12 +143,14 @@ const ProviderDashboard = ({ setCurrentPage }) => {
           onChange={(e) => setRegion(e.target.value)}
         >
           {regions.map((r) => (
-            <option key={r} value={r}>{r}</option>
+            <option key={r} value={r}>
+              {r}
+            </option>
           ))}
         </select>
 
         <div className="chart-container">
-          <Line data={data} options={options} />
+          {loading ? <p>Loading data...</p> : <Line data={data} options={options} />}
         </div>
       </div>
     </div>

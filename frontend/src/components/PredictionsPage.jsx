@@ -10,6 +10,43 @@ const PredictionsPage = () => {
     "Hîncești","Orhei","Rezina","Soroca","Ștefan Vodă","Tiraspol","Ungheni","Vadul lui Vodă"
   ];
 
+
+
+
+
+useEffect(() => {
+    const fetchData = async () => {
+      if (!userId) {
+        console.warn("No userId found in localStorage.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/id/${userId}`);
+        const result = await response.json();
+        console.log("Fetched consumption data:", result);
+
+        // Asum că backend-ul întoarce:
+        // { yesterday: [...], today: [...], tomorrow: [...] }
+        setConsumptionData({
+          Yesterday: result.yesterday || [],
+          Today: result.today || [],
+          Tomorrow: result.tomorrow || [],
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [userId]); // refetch dacă userId se schimbă
+
+
+
+
+
+
+
   const historicalData = [220, 210, 190, 180, 175, 170, 185, 200, 230, 250, 270, 290, 
                           310, 320, 315, 305, 300, 320, 340, 360, 370, 355, 330, 310];
   

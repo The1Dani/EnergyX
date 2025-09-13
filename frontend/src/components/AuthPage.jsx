@@ -1,18 +1,22 @@
 import React, { useState } from "react";
 import "./AuthPage.css";
 
-function AuthPage({ setCurrentPage, setRole }) {
+function AuthPage({ setCurrentPage, setRole, setUserId }) {
   const [roleChoice, setRoleChoice] = useState(null);
+  const [companyId, setCompanyId] = useState("");
+  const [meterId, setMeterId] = useState("");
 
   const handleProviderLogin = (e) => {
     e.preventDefault();
     setRole("provider");
+    setUserId(companyId);   // store company ID globally
     setCurrentPage("home");
   };
 
   const handleConsumerLogin = (e) => {
     e.preventDefault();
     setRole("consumer");
+    setUserId(meterId);     // store smart meter ID globally
     setCurrentPage("home");
   };
 
@@ -53,7 +57,13 @@ function AuthPage({ setCurrentPage, setRole }) {
             </div>
             <div className="mb-3">
               <label className="form-label">Company ID</label>
-              <input type="text" className="form-control" required />
+              <input
+                type="text"
+                className="form-control"
+                required
+                value={companyId}
+                onChange={(e) => setCompanyId(e.target.value)}
+              />
             </div>
             <div className="mb-3">
               <label className="form-label">Password</label>
@@ -83,7 +93,13 @@ function AuthPage({ setCurrentPage, setRole }) {
             </div>
             <div className="mb-3">
               <label className="form-label">Smart Meter ID</label>
-              <input type="text" className="form-control" required />
+              <input
+                type="text"
+                className="form-control"
+                required
+                value={meterId}
+                onChange={(e) => setMeterId(e.target.value)}
+              />
             </div>
             <button type="submit" className="btn btn-primary w-100">
               Login

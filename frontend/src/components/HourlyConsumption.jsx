@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -16,26 +16,53 @@ ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Title, T
 
 const HourlyConsumption = () => {
   const [day, setDay] = useState("Today");
+  const [userId] = useState(() => localStorage.getItem("userId") || null); // ia ID-ul salvat
+  const [consumptionData, setConsumptionData] = useState({
+    Yesterday: [],
+    Today: [],
+    Tomorrow: [],
+  });
 
   const hours = Array.from({ length: 25 }, (_, i) => (i < 10 ? `0${i}` : `${i}`));
 
-  const datasets = {
-    Yesterday: Array.from({ length: 25 }, () => Math.floor(Math.random() * 50) + 20),
-    Today: Array.from({ length: 25 }, () => Math.floor(Math.random() * 50) + 30),
-    Tomorrow: Array.from({ length: 25 }, () => Math.floor(Math.random() * 50) + 25),
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!userId) {
+        console.warn("No userId found in localStorage.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/id/${userId}`);
+        const result = await response.json();
+        console.log("Fetched consumption data:", result);
+
+        // Asum că backend-ul întoarce:
+        // { yesterday: [...], today: [...], tomorrow: [...] }
+        setConsumptionData({
+          Yesterday: result.yesterday || [],
+          Today: result.today || [],
+          Tomorrow: result.tomorrow || [],
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [userId]); // refetch dacă userId se schimbă
 
   const data = {
     labels: hours,
     datasets: [
       {
         label: `Consumption (${day})`,
-        data: datasets[day],
+        data: consumptionData[day],
         borderColor: "#134675",
         backgroundColor: "rgba(19, 70, 117, 0.3)",
         tension: 0.3,
         pointRadius: 3,
-        borderDash: day === "Tomorrow" ? [6, 6] : [], 
+        borderDash: day === "Tomorrow" ? [6, 6] : [],
       },
     ],
   };
@@ -84,16 +111,17 @@ const HourlyConsumption = () => {
       </div>
 
       <div className="chart-container">
-        <Line data={data} options={options} />
+        {consumptionData[day].length > 0 ? (
+          <Line data={data} options={options} />
+        ) : (
+          <p>Loading data...</p>
+        )}
       </div>
 
       <p className="description">
-        This chart shows the amount of electricity consumed every hour in <b>megawatts (MW)</b>.  
-        The horizontal axis represents the hours of the day (00–24), while the vertical axis 
-        shows the energy demand in MW.  
-        Use the buttons to switch between <b>Yesterday</b>, <b>Today</b>, and <b>Tomorrow</b>.  
-        When you select <b>Tomorrow</b>, the forecast is shown as a dashed line to highlight 
-        it is predicted data.
+        This chart shows the amount of electricity consumed every hour in{" "}
+        <b>megawatts (MW)</b>. The horizontal axis represents the hours of the
+        day (00–24), while the vertical axis shows the energy demand in MW.
       </p>
     </div>
   );
