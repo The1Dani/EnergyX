@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 from flask import request
 import diff_data
-import calc_tarrif
 
 GAUSS_LOOKUP = [425, 428.29, 500, 428.29, 425]
 
@@ -33,6 +32,7 @@ def keys_route():
 #     return diff_data.calc_consump(data)
 
 ## 7->11, 18->22
+
 @app.route("/tarrif/<hour>")
 def tarrif(hour):
     if 7 <= hour <= 11:
