@@ -1,0 +1,41 @@
+.hourly-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.button-group button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background-color: #87c3f7;
+  color: #134675;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button-group button:hover {
+  background-color: #5aaae0;
+}
+
+.button-group button.active {
+  background-color: #134675;
+  color: #fff;
+}
+
+.chart-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+}
