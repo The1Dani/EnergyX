@@ -25,11 +25,10 @@ function Chatbot() {
       {open && (
         <div className="chat-window">
           <div className="chat-header">
-            <h5>Energy Assistant</h5>
-            <button className="close-btn" onClick={() => setOpen(false)}>
-              <i className="bi bi-x-lg"></i>
-            </button>
+            <h5 className="chat-title">Energy Assistant</h5>
+           
           </div>
+
           <div className="chat-body">
             {messages.map((msg, i) => (
               <div key={i} className={`chat-msg ${msg.from}`}>
@@ -37,6 +36,7 @@ function Chatbot() {
               </div>
             ))}
           </div>
+
           <div className="chat-input">
             <input
               value={input}

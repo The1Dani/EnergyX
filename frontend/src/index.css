@@ -228,7 +228,6 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 60px;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -238,7 +237,6 @@ h1, h2, h3, h4, h5, h6 {
   animation: fadeIn 1s ease forwards;
 }
 
-/* Particle animation for background */
 .particles {
   position: absolute;
   top: 0;
@@ -254,7 +252,6 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 50%;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .hero-section {
     padding: 60px 0 40px;

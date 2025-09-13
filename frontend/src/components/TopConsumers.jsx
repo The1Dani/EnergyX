@@ -4,12 +4,18 @@ import "./DashboardandConsumers.css";
 const TopConsumers = () => {
   const consumers = [
     { region: "Chișinău", value: 245 },
-    { region: "Bălți", value: 198 },
-    { region: "Cahul", value: 134 },
-    { region: "Orhei", value: 120 },
-    { region: "Ungheni", value: 105 },
-    { region: "Cahul", value: 120 },
-    { region: "Strășeni", value: 105 },
+    { region: "Bălți", value: 232 },
+    { region: "Cahul", value: 205 },
+    { region: "Orhei", value: 198 },
+    { region: "Ungheni", value: 185 },
+    { region: "Cahul", value: 179 },
+    { region: "Strășeni", value: 171 },
+    { region: "Ștefan Vodă", value: 160 },
+    { region: "Dubăsari", value: 156 },
+    { region: "Dondușeni", value: 130 },
+    { region: "Glodeni", value: 126 },
+    { region: "Taraclia", value: 125 },
+    { region: "Telenești ", value: 119 },
   ];
 
   return (

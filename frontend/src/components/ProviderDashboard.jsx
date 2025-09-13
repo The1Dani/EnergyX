@@ -17,7 +17,24 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 const ProviderDashboard = ({ setCurrentPage }) => {
   const [region, setRegion] = useState("Chișinău");
 
-  const regions = ["Chișinău", "Bălți", "Cahul", "Orhei", "Ungheni", "Hîncești"];
+  const regions = [
+  "Bălți",
+  "Cahul",
+  "Chișinău",
+  "Comrat",
+  "Cricova",
+  "Edineț",
+  "Florești",
+  "Hîncești",
+  "Orhei",
+  "Rezina",
+  "Soroca",
+  "Ștefan Vodă",
+  "Tiraspol",
+  "Ungheni",
+  "Vadul lui Vodă"
+]
+;
 
   const data = {
     labels: Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, "0")),
@@ -49,9 +66,7 @@ const ProviderDashboard = ({ setCurrentPage }) => {
     <div className="container py-4">
       <h2 className="mb-4">Dashboard</h2>
 
-      {/* 2×2 grid of cards */}
       <div className="dashboard-grid">
-        {/* Interactive Map card → navigates to SearchPage */}
         <div
           className="card dashboard-card clickable"
           onClick={() => setCurrentPage("search")}
@@ -80,7 +95,6 @@ const ProviderDashboard = ({ setCurrentPage }) => {
         </div>
       </div>
 
-      {/* Dropdown + chart */}
       <div className="mt-5">
         <label className="form-label fw-bold">Select Region</label>
         <select

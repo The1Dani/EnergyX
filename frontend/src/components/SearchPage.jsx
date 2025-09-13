@@ -1,7 +1,32 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./SearchPage.css";
 
 const SearchPage = () => {
+  const [selectedCity, setSelectedCity] = useState("Chișinău");
+
+  const cities = [
+    "Bălți","Cahul","Chișinău","Comrat","Cricova","Edineț","Florești",
+    "Hîncești","Orhei","Rezina","Soroca","Ștefan Vodă","Tiraspol","Ungheni","Vadul lui Vodă"
+  ];
+
+  const cityData = {
+    "Chișinău": { avg: 125, current: 138, peak: "18:00 - 21:00" },
+    "Bălți": { avg: 98, current: 110, peak: "17:00 - 20:00" },
+    "Cahul": { avg: 76, current: 82, peak: "12:00 - 15:00" },
+    "Orhei": { avg: 88, current: 101, peak: "19:00 - 22:00" },
+    "Ungheni": { avg: 65, current: 72, peak: "13:00 - 16:00" },
+    "Hîncești": { avg: 92, current: 115, peak: "18:00 - 21:00" },
+    "Comrat": { avg: 70, current: 79, peak: "14:00 - 17:00" },
+    "Cricova": { avg: 55, current: 61, peak: "11:00 - 14:00" },
+    "Edineț": { avg: 64, current: 74, peak: "10:00 - 13:00" },
+    "Florești": { avg: 59, current: 67, peak: "15:00 - 18:00" },
+    "Rezina": { avg: 72, current: 84, peak: "16:00 - 19:00" },
+    "Soroca": { avg: 83, current: 96, peak: "18:00 - 21:00" },
+    "Ștefan Vodă": { avg: 60, current: 68, peak: "09:00 - 12:00" },
+    "Tiraspol": { avg: 140, current: 158, peak: "20:00 - 23:00" },
+    "Vadul lui Vodă": { avg: 50, current: 56, peak: "08:00 - 11:00" },
+  };
+
   useEffect(() => {
     const L = window.L;
     if (!L) return;
@@ -12,11 +37,9 @@ const SearchPage = () => {
       attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
 
-    // ✅ Example GeoJSON for Moldova regions (simplified!)
     fetch("https://raw.githubusercontent.com/codeforgermany/click_that_hood/main/public/data/moldova.geojson")
       .then((res) => res.json())
       .then((geojson) => {
-        // Example statuses per region
         const regionStatus = {
           "Chișinău": "danger",
           "Bălți": "warning",
@@ -27,9 +50,9 @@ const SearchPage = () => {
         };
 
         function getColor(status) {
-          if (status === "normal") return "#28a745"; // green
-          if (status === "warning") return "#ffc107"; // yellow
-          if (status === "danger") return "#dc3545"; // red
+          if (status === "normal") return "#28a745";
+          if (status === "warning") return "#ffc107";
+          if (status === "danger") return "#dc3545";
           return "#999";
         }
 
@@ -78,42 +101,38 @@ const SearchPage = () => {
       <div className="container-fluid">
         <h2 className="section-title text-center mb-4">🔍 Search Localities</h2>
         <div className="row">
-          {/* Left Panel */}
           <div className="col-lg-4 mb-4">
-            <div className="search-box d-flex mb-4">
-              <input
-                type="text"
-                className="form-control search-input"
-                placeholder="Type a city name..."
-              />
-              <button className="btn btn-primary search-btn">Search</button>
+            <div className="mb-4">
+              <label className="form-label fw-bold">Select City</label>
+              <select
+                className="form-select"
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+              >
+                {cities.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
             </div>
 
             <div className="data-card">
-              <h3 className="data-title">Chișinău</h3>
+              <h3 className="data-title">{selectedCity}</h3>
               <p className="data-label">Daily Avg</p>
-              <div className="data-value">125 MW</div>
+              <div className="data-value">{cityData[selectedCity].avg} MW</div>
               <p className="data-label">Current Usage</p>
-              <div className="data-value">138 MW</div>
+              <div className="data-value">{cityData[selectedCity].current} MW</div>
               <p className="data-label">Peak Hours</p>
-              <div className="data-value">18:00 - 21:00</div>
+              <div className="data-value">{cityData[selectedCity].peak}</div>
             </div>
 
             <div className="data-card">
               <h3 className="data-title">Network Status</h3>
-              <div className="status-item normal">
-                <span className="status-dot"></span> Normal (0-70%)
-              </div>
-              <div className="status-item warning">
-                <span className="status-dot"></span> Moderate (70-90%)
-              </div>
-              <div className="status-item danger">
-                <span className="status-dot"></span> Critical (90%+)
-              </div>
+              <div className="status-item normal"><span className="status-dot"></span> Normal (0-70%)</div>
+              <div className="status-item warning"><span className="status-dot"></span> Moderate (70-90%)</div>
+              <div className="status-item danger"><span className="status-dot"></span> Critical (90%+)</div>
             </div>
           </div>
 
-          {/* Right Panel (Map) */}
           <div className="col-lg-8">
             <div id="map" className="map-container"></div>
           </div>

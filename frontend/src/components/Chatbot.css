@@ -20,12 +20,11 @@
   transform: scale(1.1);
 }
 
-/* Chat Window */
 .chat-window {
   position: fixed;
   bottom: 80px;
   right: 20px;
-  width: 350px;
+  width: 320px;
   height: 60%;
   max-height: 500px;
   background: rgba(255,255,255,0.97);
@@ -38,7 +37,17 @@
   animation: slideUp 0.4s ease;
 }
 
-/* Header */
+@media (max-width: 480px) {
+  .chat-window {
+    left: 50%;  
+    transform: translateX(-50%); 
+    width: 90%;
+    height: 65%;
+    right: auto; 
+  }
+}
+
+
 .chat-header {
   background: linear-gradient(135deg, #004aad, #007bff);
   color: white;
@@ -46,62 +55,70 @@
   font-weight: 600;
   border-radius: 20px 20px 0 0;
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 }
+
 .chat-header .close-btn {
   background: transparent;
   border: none;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease;
   border-radius: 50%;
-  padding: 6px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
 }
+
+.chat-title {
+  flex: 1;
+  text-align: left;
+  margin: 0;
+}
+
 .chat-header .close-btn:hover {
   background: rgba(255,255,255,0.2);
   transform: rotate(90deg);
 }
 
-/* Chat Body */
 .chat-body {
   flex: 1;
   padding: 12px;
   overflow-y: auto;
   background: #f9f9f9;
-
   display: flex;
-  flex-direction: column;   /* ✅ stack messages vertically */
-  gap: 6px;                 /* ✅ spacing between bubbles */
+  flex-direction: column;
+  gap: 6px;
 }
 
 .chat-msg {
-  display: inline-block;    /* ✅ bubble hugs text */
+  display: inline-block;
   padding: 10px 14px;
   border-radius: 18px;
   font-size: 0.95rem;
   line-height: 1.4;
   word-wrap: break-word;
-  max-width: 75%;           /* ✅ wrap long text */
+  max-width: 75%;
 }
 
 .chat-msg.user {
   background: #007bff;
   color: white;
-  margin-left: auto;        /* ✅ align right */
+  margin-left: auto;
   border-bottom-right-radius: 4px;
 }
 
 .chat-msg.bot {
   background: #e6e9ef;
   color: #333;
-  margin-right: auto;       /* ✅ align left */
+  margin-right: auto;
   border-bottom-left-radius: 4px;
 }
 
-
-/* Input */
 .chat-input {
   display: flex;
   padding: 10px;
@@ -136,7 +153,6 @@
   transform: scale(1.1);
 }
 
-/* Animation */
 @keyframes slideUp {
   from { transform: translateY(50px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }

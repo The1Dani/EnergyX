@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 
 const PredictionsPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [timeRange, setTimeRange] = useState('24h');
-  const [selectedTab, setSelectedTab] = useState('localitate');
+  const [city, setCity] = useState("Chișinău");
+  const [timeRange, setTimeRange] = useState("24h");
+  const [selectedTab, setSelectedTab] = useState("location");
 
-  // Date simulate pentru grafic
+  const cities = [
+    "Bălți","Cahul","Chișinău","Comrat","Cricova","Edineț","Florești",
+    "Hîncești","Orhei","Rezina","Soroca","Ștefan Vodă","Tiraspol","Ungheni","Vadul lui Vodă"
+  ];
+
   const historicalData = [220, 210, 190, 180, 175, 170, 185, 200, 230, 250, 270, 290, 
                           310, 320, 315, 305, 300, 320, 340, 360, 370, 355, 330, 310];
   
@@ -18,30 +22,31 @@ const PredictionsPage = () => {
                             660, 670, 680, 690, 700, 710, 720, 730, 740, 750, 760, 770];
 
   const labels24h = Array.from({length: 24}, (_, i) => `${i}:00`);
-  const labels7d = Array.from({length: 7}, (_, i) => `Ziua ${i+1}`);
+  const labels7d = Array.from({length: 7}, (_, i) => `Day ${i+1}`);
 
-  // Funcție pentru a desena graficul simplificat
   const renderChart = () => {
-    const data = timeRange === '24h' ? historicalData.concat(predictionData24h) : historicalData.concat(predictionData7d);
-    const labels = timeRange === '24h' ? labels24h : labels7d;
+    const data = timeRange === "24h" 
+      ? historicalData.concat(predictionData24h) 
+      : historicalData.concat(predictionData7d);
+
+    const labels = timeRange === "24h" ? labels24h : labels7d;
     const maxValue = Math.max(...data);
-    
+
     return (
       <div className="chart-container">
         <div className="position-relative h-100">
-          {/* Axe și linii de background */}
+     
           <div className="position-absolute w-100 h-100 d-flex flex-column justify-content-between">
             {[0, 1, 2, 3, 4].map(i => (
-              <div key={i} className="d-flex align-items-center" style={{ height: '20%' }}>
-                <div className="text-muted me-2" style={{ width: '40px' }}>
+              <div key={i} className="d-flex align-items-center" style={{ height: "20%" }}>
+                <div className="text-muted me-2" style={{ width: "40px" }}>
                   {Math.round(maxValue * (4 - i) / 4)}
                 </div>
                 <div className="flex-grow-1 border-top"></div>
               </div>
             ))}
           </div>
-          
-          {/* Linia graficului */}
+
           <div className="position-absolute w-100 h-100 pt-4">
             <div className="position-relative h-100">
               {data.map((value, index) => (
@@ -49,16 +54,15 @@ const PredictionsPage = () => {
                   key={index}
                   className="position-absolute bg-primary rounded"
                   style={{
-                    width: '4px',
+                    width: "4px",
                     height: `${(value / maxValue) * 80}%`,
                     left: `${(index / (data.length - 1)) * 100}%`,
-                    bottom: '0',
-                    transform: 'translateX(-50%)'
+                    bottom: "0",
+                    transform: "translateX(-50%)"
                   }}
                 ></div>
               ))}
-              
-              {/* Linia limită maximă */}
+
               <div 
                 className="position-absolute w-100 border-top border-danger"
                 style={{
@@ -74,67 +78,63 @@ const PredictionsPage = () => {
 
   return (
     <div className="container-fluid py-4">
-      <h1 className="text-center mb-4 display-5 fw-bold">Prognoze consum energetic</h1>
-      
+      <h1 className="text-center mb-4 display-5 fw-bold">Energy Consumption Forecasts</h1>
+
       <ul className="nav nav-tabs justify-content-center mb-3">
         <li className="nav-item">
           <button 
-            className={`nav-link ${selectedTab === 'localitate' ? 'active' : ''}`}
-            onClick={() => setSelectedTab('localitate')}
+            className={`nav-link ${selectedTab === "location" ? "active" : ""}`}
+            onClick={() => setSelectedTab("location")}
           >
-            După localitate
+            By Location
           </button>
         </li>
         <li className="nav-item">
           <button 
-            className={`nav-link ${selectedTab === 'tara' ? 'active' : ''}`}
-            onClick={() => setSelectedTab('tara')}
+            className={`nav-link ${selectedTab === "country" ? "active" : ""}`}
+            onClick={() => setSelectedTab("country")}
           >
-            Situația națională
+            National Overview
           </button>
         </li>
       </ul>
-      
-      {selectedTab === 'localitate' && (
+
+      {selectedTab === "location" && (
         <div className="row justify-content-center mb-4">
-          <div className="col-md-8">
-            <form>
-              <div className="d-flex">
-                <input
-                  type="text"
-                  className="form-control form-control-lg me-2"
-                  placeholder="Introduceți numele localității..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-                <button type="button" className="btn btn-primary btn-lg">
-                  Caută
-                </button>
-              </div>
-            </form>
+          <div className="col-md-6">
+            <label className="form-label fw-bold">Select City</label>
+            <select
+              className="form-select form-select-lg"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+            >
+              {cities.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
         </div>
       )}
-      
-      {selectedTab === 'tara' && (
+
+      {selectedTab === "country" && (
         <div className="text-center mb-4">
-          <h3>Prognoza consumului la nivel național</h3>
+          <h3>National Consumption Forecast</h3>
         </div>
       )}
 
       <div className="text-center mb-4">
         <div className="btn-group">
           <button 
-            className={`btn ${timeRange === '24h' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => setTimeRange('24h')}
+            className={`btn ${timeRange === "24h" ? "btn-primary" : "btn-outline-primary"}`}
+            onClick={() => setTimeRange("24h")}
           >
-            24 Ore
+            24 Hours
           </button>
           <button 
-            className={`btn ${timeRange === '7d' ? 'btn-primary' : 'btn-outline-primary'}`}
-            onClick={() => setTimeRange('7d')}
+            className={`btn ${timeRange === "7d" ? "btn-primary" : "btn-outline-primary"}`}
+            onClick={() => setTimeRange("7d")}
           >
-            7 Zile
+            7 Days
           </button>
         </div>
       </div>
@@ -148,23 +148,17 @@ const PredictionsPage = () => {
       <div className="row mt-4">
         <div className="col-md-6">
           <div className="p-3 bg-light rounded">
-            <h4>Analiza prognozei</h4>
+            <h4>How to Read the Forecast</h4>
             <p>
-              {timeRange === '24h' 
-                ? 'În următoarele 24 de ore se preconizează o creștere a consumului cu aproximativ 25%, depășind limita maximă recomandată între orele 10:00 și 16:00.'
-                : 'În următoarea săptămână, consumul va avea o tendință de creștere constantă, depășind limita maximă începând cu ziua a 3-a.'}
+              The blue bars represent the estimated energy consumption for <b>{city}</b> 
+              during the selected time period. The red horizontal line indicates the maximum 
+              recommended consumption level. If the bars go above this line, demand exceeds 
+              the safe limit. Switch between a 24-hour and a 7-day view to better understand 
+              daily vs. weekly patterns.
             </p>
           </div>
         </div>
         <div className="col-md-6">
-          <div className="p-3 bg-light rounded">
-            <h4>Recomandări</h4>
-            <p>
-              {timeRange === '24h' 
-                ? 'Se recomandă activarea centralei de rezervă între orele 09:00-17:00 și implementarea unor măsuri de reducere a consumului în sectorul industrial.'
-                : 'Este necesară planificarea activării tuturor surselor de energie disponibile și notificarea consumatorilor majori să-și programeze activitățile intensive outside orele de vârf.'}
-            </p>
-          </div>
         </div>
       </div>
     </div>
