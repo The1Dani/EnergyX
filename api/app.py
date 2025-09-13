@@ -26,6 +26,10 @@ def diffs(id):
 def keys_route():
     return keys
 
+@app.route("/calc")
+def calc():
+    return diff_data.calc_consump(data)
+
 @app.route("/color", methods=['POST'])
 def give_color() :
     json_data = request.get_json()  # parse JSON body
