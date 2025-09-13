@@ -5,8 +5,12 @@ from datetime import datetime, timedelta
 
 
 def find_highest_energy_difference(house_id, target_date):
-    path = "C:/Users/user/Desktop/GigaTechHt/DataSet"
-
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Go up one level to the repository root, then into the data folder
+    repo_root = os.path.dirname(script_dir)
+    path = os.path.join(repo_root, 'data')
     try:
         target_date_obj = datetime.strptime(target_date, '%d.%m.%Y')
     except ValueError:
@@ -21,14 +25,13 @@ def find_highest_energy_difference(house_id, target_date):
     for file in data_files:
         try:
             if file.lower().endswith('.csv'):
-                df = pd.read_csv(file, delimiter=';', header=None, dtype=str,
-                                 encoding='utf-8', on_bad_lines='skip')
+                df = pd.read_csv(file, header=None, dtype=str, encoding='utf-8', on_bad_lines='skip')
             else:
-                df = pd.read_excel(file, delimiter=';', header=None, dtype=str)
+                df = pd.read_excel(file, header=None, dtype=str)
 
-            df.columns = ['id', 'datetime', 'energy_value', 'active_energy_import', 'active_energy_export', 'empty'][
-                         :len(df.columns)]
+            df.columns = ['id', 'datetime', 'active_energy_import', 'active_energy_export', 'transFullCoef', 'empty'][:len(df.columns)]
 
+            # Convert id to numeric and filter by house_id
             df['id'] = pd.to_numeric(df['id'], errors='coerce')
             df = df.dropna(subset=['id'])
             df = df[df['id'] == house_id]
@@ -37,15 +40,17 @@ def find_highest_energy_difference(house_id, target_date):
                 df['datetime_obj'] = pd.to_datetime(df['datetime'], format='%d.%m.%Y %H:%M:%S', errors='coerce')
                 df = df.dropna(subset=['datetime_obj'])
 
-                df['energy_value'] = df['energy_value'].str.replace(',', '.').astype(float, errors='ignore')
-                df = df.dropna(subset=['energy_value'])
+                df['active_energy_import'] = df['active_energy_import'].str.replace(',', '.').astype(float, errors='ignore')
+                df = df.dropna(subset=['active_energy_import'])
 
+                # Filter by target date
                 df = df[df['datetime_obj'].dt.date == target_date_obj.date()]
 
                 if not df.empty:
                     all_data.append(df)
 
         except Exception as e:
+            print(f"Error processing file {file}: {e}")
             continue
 
     if not all_data:
@@ -83,15 +88,15 @@ def find_highest_energy_difference(house_id, target_date):
             time_gap = (next_point['datetime_obj'] - current['datetime_obj']).total_seconds()
 
             if config['min_sec'] <= time_gap <= config['max_sec']:
-                energy_diff = next_point['energy_value'] - current['energy_value']
+                energy_diff = next_point['active_energy_import'] - current['active_energy_import']
 
                 if energy_diff > 0:
                     differences.append({
                         'interval_start': current['datetime_obj'],
                         'interval_end': next_point['datetime_obj'],
                         'energy_difference': energy_diff,
-                        'energy_start': current['energy_value'],
-                        'energy_end': next_point['energy_value'],
+                        'energy_start': current['active_energy_import'],
+                        'energy_end': next_point['active_energy_import'],
                         'actual_minutes': time_gap / 60,
                         'interval_type': config['type']
                     })
@@ -112,15 +117,15 @@ def find_highest_energy_difference(house_id, target_date):
             next_point = combined_data.iloc[i + 1]
 
             time_gap = (next_point['datetime_obj'] - current['datetime_obj']).total_seconds()
-            energy_diff = abs(next_point['energy_value'] - current['energy_value'])
+            energy_diff = abs(next_point['active_energy_import'] - current['active_energy_import'])
 
             if energy_diff > 0 and 60 <= time_gap <= 7200: 
                 abs_differences.append({
                     'interval_start': current['datetime_obj'],
                     'interval_end': next_point['datetime_obj'],
                     'energy_difference': energy_diff,
-                    'energy_start': current['energy_value'],
-                    'energy_end': next_point['energy_value'],
+                    'energy_start': current['active_energy_import'],
+                    'energy_end': next_point['active_energy_import'],
                     'actual_minutes': time_gap / 60,
                     'interval_type': 'absolute-difference'
                 })
@@ -139,7 +144,7 @@ def find_highest_energy_difference(house_id, target_date):
 
 
 def analyze_energy_data_structure(house_id, target_date):
-    path = "C:/Users/user/Desktop/GigaTechHt/DataSet"
+    path = "C:/Users/user/Desktop/GigaTechHt/EnergyX/data"
 
     try:
         target_date_obj = datetime.strptime(target_date, '%d.%m.%Y')
@@ -150,11 +155,14 @@ def analyze_energy_data_structure(house_id, target_date):
         for file in data_files[:1]:  # Just check first file for structure
             try:
                 if file.lower().endswith('.csv'):
-                    sample_df = pd.read_csv(file, delimiter=';', header=None, dtype=str, nrows=5)
+                    # Read without delimiter for separate columns
+                    sample_df = pd.read_csv(file, header=None, dtype=str, nrows=5)
                 else:
-                    sample_df = pd.read_excel(file, delimiter=';', header=None, dtype=str, nrows=5)
+                    sample_df = pd.read_excel(file, header=None, dtype=str, nrows=5)
+
 
             except Exception as e:
+                print(f"Error analyzing file {file}: {e}")
                 continue
 
     except Exception as e:
@@ -162,7 +170,6 @@ def analyze_energy_data_structure(house_id, target_date):
 
 
 def interactive_search():
-
     try:
         house_id = int(input("Enter house ID: ").strip())
         target_date = input("Enter date (DD.MM.YYYY format): ").strip()
@@ -175,13 +182,11 @@ def interactive_search():
             print(f"House ID: {house_id}")
             print(f"Date: {target_date}")
             print(f"Time interval: {start_time.strftime('%H:%M:%S')} to {end_time.strftime('%H:%M:%S')}")
-            print(f"Energy difference: {max_diff:.6f} kWh")
+            print(f"Energy difference: {max_diff:.3f} kWh")
 
-            # Calculate time difference and power
             time_diff_hours = (end_time - start_time).total_seconds() / 3600
-            power_kw = max_diff / time_diff_hours if time_diff_hours > 0 else 0
         else:
-            print("\nError")
+            print("\nError: No valid data found or no positive energy differences detected.")
 
     except ValueError:
         print("Invalid input! House ID must be a number.")
