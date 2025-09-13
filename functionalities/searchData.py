@@ -144,8 +144,10 @@ def find_highest_energy_difference(house_id, target_date):
 
 
 def analyze_energy_data_structure(house_id, target_date):
-    path = "C:/Users/user/Desktop/GigaTechHt/EnergyX/data"
-
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    repo_root = os.path.dirname(script_dir)
+    path = os.path.join(repo_root, 'data')
     try:
         target_date_obj = datetime.strptime(target_date, '%d.%m.%Y')
 

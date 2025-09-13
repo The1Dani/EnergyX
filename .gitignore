@@ -1,3 +1,5 @@
 .venv
 __pycache__
 functionalities/tempCodeRunnerFile.py
+functionalities/processed.json
+functionalities/sumOfLastCoefs.py
