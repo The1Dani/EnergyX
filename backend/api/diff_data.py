@@ -4,7 +4,9 @@ import copy
 
 
 CLOCK_COLMN_NAME = "Clock (8:0-0:1.0.0*255:2)"
-
+METER_MAP_FILE = "/opt/data/daniel_data/meter_to_location.json"
+LOCATION_CSV_FILE = "/opt/data/daniel_data/locations.csv"
+DATA_JSON_FILE = "/opt/data/data.json"
 
 def get_time_obj_from_dict(d):
     return datetime.strptime(d[CLOCK_COLMN_NAME], "%d.%m.%Y %H:%M:%S")
@@ -99,7 +101,6 @@ from diff_data import calc_diff_timed
 import os
 import pandas as pd
 
-METER_MAP_FILE = "/home/dani/faf/gigahack/data/daniel_data/meter_to_location.json"
 
 
 def get_all_region_meters() -> dict:
@@ -193,7 +194,7 @@ def get_color_json(data: dict, cloc: str) -> dict:
     avg_val = sum(values) / len(values) if values else 0
 
     # Load coordinates from locations.csv
-    coords_df = pd.read_csv("/home/dani/faf/gigahack/data/daniel_data/locations.csv")
+    coords_df = pd.read_csv(LOCATION_CSV_FILE)
     coords_map = {
         row["Name"]: (row["Latitude"], row["Longitude"])
         for _, row in coords_df.iterrows()
@@ -233,7 +234,7 @@ def get_region_consumption(data:dict, region:str) -> dict:
 
 def calc_consump(data:dict) -> list[dict]:
 
-    coords_df = pd.read_csv("/home/dani/faf/gigahack/data/daniel_data/locations.csv")
+    coords_df = pd.read_csv(LOCATION_CSV_FILE)
     coords_maps: list[str] = [row["Name"] for _, row in coords_df.iterrows()]
 
     every = {}
@@ -263,7 +264,7 @@ if __name__ == "__main__":
 
     data = {}
     # Opening JSON file
-    with open("/home/dani/faf/gigahack/data/data.json") as json_file:
+    with open(DATA_JSON_FILE) as json_file:
         data: dict = json.load(json_file)
 
     
