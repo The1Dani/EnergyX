@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
 from flask import request
+from flask_cors import CORS
 import diff_data
 
 GAUSS_LOOKUP = [425, 428.29, 500, 428.29, 425]
 
 app = Flask(__name__)
+CORS(app)
 
 import json
 data = {}
