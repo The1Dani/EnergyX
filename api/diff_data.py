@@ -59,12 +59,13 @@ def get_timed_diffs(data: dict, ids: list[str], time: str) -> list[dict]:
 
 
 def calc_diff_from_two_timed_arrays(d2: dict, d1: dict):
+    common_keys = (d2.keys() & d1.keys())
     return {
         m_id: {
             "Export Delta": d2[m_id]["Export"] - d1[m_id]["Export"],
             "Import Delta": d2[m_id]["Import"] - d1[m_id]["Import"],
         }
-        for m_id, _ in d2.items()
+        for m_id in common_keys
     }
 
 
