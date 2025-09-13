@@ -1,24 +1,52 @@
 import React from "react";
+import "./Leaderboard.css";
 
 function Leaderboard() {
+  const currentUser = "Ioana Vasilescu"; 
+
   const users = [
-    { name: "John Doe", points: 120 },
-    { name: "Alice Smith", points: 110 },
-    { name: "Michael Brown", points: 95 },
-    { name: "Emma Davis", points: 90 },
+    { name: "Maria Ionescu", points: 150 },
+    { name: "Ion Georgescu", points: 140 },
+    { name: "Ioana Vasilescu", points: 135 }, 
+    { name: "Elena Radu", points: 120 },
+    { name: "Gabriel Marinescu", points: 115 },
+    { name: "Ana Dumitrescu", points: 100 },
+    { name: "Vlad Mihăilescu", points: 95 },
+    { name: "Cristina Dobre", points: 90 },
   ];
 
+  const getMedal = (rank) => {
+    if (rank === 1) return "🥇";
+    if (rank === 2) return "🥈";
+    if (rank === 3) return "🥉";
+    return `#${rank}`;
+  };
+
   return (
-    <div className="container py-4">
-      <h2 className="mb-3">Best Energy User</h2>
-      <ul className="list-group">
+    <div className="leaderboard-container">
+      <h2 className="leaderboard-title">🏆Top energy users</h2>
+      <p className="leaderboard-subtitle">
+        Compete with other users to save energy and climb the leaderboard!
+      </p>
+
+      <ul className="leaderboard-list">
         {users.map((u, i) => (
-          <li key={i} className="list-group-item d-flex justify-content-between">
-            <span>{u.name}</span>
-            <strong>{u.points} pts</strong>
+          <li
+            key={i}
+            className={`leaderboard-item ${
+              u.name === currentUser ? "highlight" : ""
+            }`}
+          >
+            <span className="rank">{getMedal(i + 1)}</span>
+            <span className="name">{u.name}</span>
+            <span className="points">{u.points} ⚡︎</span>
           </li>
         ))}
       </ul>
+
+      <div className="leaderboard-footer">
+        🌱Save energy daily to climb to the top!
+      </div>
     </div>
   );
 }

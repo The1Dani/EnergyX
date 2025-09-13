@@ -4,26 +4,20 @@ import "./HomePage.css";
 function HomePage({ openMenu }) {
   return (
     <div className="HomePage">
-      <section className="hero d-flex align-items-center text-center text-white">
+      <div className="hero d-flex align-items-center text-center text-white">
         <div className="container">
           <h1 className="display-3 fw-bold mb-3 animate-fadeDown">
             <i className="bi bi-lightning-charge-fill me-2"></i>
-            Smart Energy Dashboard
+            Smart Energy App
           </h1>
           <p className="lead mb-4 animate-fadeUp">
             Turning energy data into smart actions for a sustainable future
           </p>
-          {/* Instead of link → trigger menu */}
-          <button
-            onClick={openMenu}
-            className="btn btn-light btn-lg rounded-pill shadow animate-fadeUp"
-          >
-            Get Started
-          </button>
+          
         </div>
-      </section>
+        
+      </div>
 
-      {/* Stats */}
       <section className="stats py-5">
         <div className="container">
           <div className="row g-4 text-center">
@@ -59,7 +53,6 @@ function HomePage({ openMenu }) {
         </div>
       </section>
 
-      {/* Solution */}
       <section className="solution py-5 bg-light">
         <div className="container">
           <div className="row align-items-center">
@@ -77,13 +70,6 @@ function HomePage({ openMenu }) {
                 <li><i className="bi bi-person-check text-warning me-2"></i> Personalized Recommendations</li>
                 <li><i className="bi bi-bell text-danger me-2"></i> Early Alerts</li>
               </ul>
-            </div>
-            <div className="col-lg-6 text-center">
-              <img
-                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=900&q=80"
-                alt="EnergyTech Solution"
-                className="img-fluid rounded shadow-lg"
-              />
             </div>
           </div>
         </div>

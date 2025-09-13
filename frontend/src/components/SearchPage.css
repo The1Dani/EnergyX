@@ -19,7 +19,6 @@
   border-radius: 3px;
 }
 
-/* Search bar */
 .search-box {
   border: 1px solid #ddd;
   border-radius: 12px;
@@ -41,7 +40,6 @@
   font-weight: 600;
 }
 
-/* Cards */
 .data-card {
   background: white;
   border-radius: 14px;
@@ -69,7 +67,6 @@
   color: #004aad;
 }
 
-/* Network status pills */
 .status-item {
   display: flex;
   align-items: center;
@@ -88,7 +85,6 @@
 .status-item.warning .status-dot { background: #ffc107; }
 .status-item.danger .status-dot { background: #dc3545; }
 
-/* Map */
 .map-container {
   height: 500px;
   width: 100%;
@@ -100,12 +96,10 @@
     height: 350px;
   }
 }
-/* Chat icon always above */
 .chat-icon {
-  z-index: 1050; /* ✅ above map */
+  z-index: 1050; 
 }
 
-/* Chat window also above map */
 .chat-window {
   z-index: 1100;
 }

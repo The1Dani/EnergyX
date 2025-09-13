@@ -1,10 +1,8 @@
-/* Section */
 #recommendations.page-section {
   background: #f9fbfd;
   padding: 60px 0;
 }
 
-/* Section title */
 #recommendations .section-title {
   font-size: 2.2rem;
   font-weight: 700;
@@ -22,14 +20,12 @@
   border-radius: 3px;
 }
 
-/* Grid layout */
 .recommendations-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
 }
 
-/* Alert cards */
 #recommendations .alert-card {
   background: #fff;
   border-left: 5px solid #004aad;
@@ -59,12 +55,10 @@
   color: #4a5568;
 }
 
-/* Icons inside alerts */
 #recommendations .alert-title i {
   font-size: 1.4rem;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   #recommendations .section-title {
     font-size: 1.8rem;

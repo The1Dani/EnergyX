@@ -19,7 +19,6 @@ const HourlyConsumption = () => {
 
   const hours = Array.from({ length: 25 }, (_, i) => (i < 10 ? `0${i}` : `${i}`));
 
-  // Example dummy data (MW values)
   const datasets = {
     Yesterday: Array.from({ length: 25 }, () => Math.floor(Math.random() * 50) + 20),
     Today: Array.from({ length: 25 }, () => Math.floor(Math.random() * 50) + 30),
@@ -36,12 +35,14 @@ const HourlyConsumption = () => {
         backgroundColor: "rgba(19, 70, 117, 0.3)",
         tension: 0.3,
         pointRadius: 3,
+        borderDash: day === "Tomorrow" ? [6, 6] : [], 
       },
     ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: true, position: "top" },
       title: { display: true, text: `Hourly Consumption - ${day}` },
@@ -60,6 +61,7 @@ const HourlyConsumption = () => {
   return (
     <div className="hourly-page">
       <h1>Hourly Consumption</h1>
+
       <div className="button-group">
         <button
           className={day === "Yesterday" ? "active" : ""}
@@ -80,9 +82,19 @@ const HourlyConsumption = () => {
           Tomorrow
         </button>
       </div>
+
       <div className="chart-container">
         <Line data={data} options={options} />
       </div>
+
+      <p className="description">
+        This chart shows the amount of electricity consumed every hour in <b>megawatts (MW)</b>.  
+        The horizontal axis represents the hours of the day (00–24), while the vertical axis 
+        shows the energy demand in MW.  
+        Use the buttons to switch between <b>Yesterday</b>, <b>Today</b>, and <b>Tomorrow</b>.  
+        When you select <b>Tomorrow</b>, the forecast is shown as a dashed line to highlight 
+        it is predicted data.
+      </p>
     </div>
   );
 };

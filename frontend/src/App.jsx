@@ -13,10 +13,11 @@ import Leaderboard from './components/Leaderboard';
 import Chatbot from './components/Chatbot';
 import ProviderDashboard from "./components/ProviderDashboard";
 import TopConsumers from "./components/TopConsumers";
+import SmartHouse from "./components/SmartHouse"; 
 
 function App() {
   const [currentPage, setCurrentPage] = useState('auth');
-  const [role, setRole] = useState(null); // track Provider or Consumer
+  const [role, setRole] = useState(null); 
 
   const renderPage = () => {
     switch (currentPage) {
@@ -36,11 +37,12 @@ function App() {
         return <TariffCalculator />;
       case 'leaderboard':
         return <Leaderboard />;
+      case 'smarthouse':                             
+        return <SmartHouse />;
       case "provider-dashboard":
         return <ProviderDashboard setCurrentPage={setCurrentPage} />;
       case "top-consumers":
         return <TopConsumers />;
-      
 
       default:
         return <HomePage />;
@@ -49,7 +51,6 @@ function App() {
 
   return (
     <div>
-      {/* Hide Navbar & Footer on Auth Page */}
       {currentPage !== 'auth' && (
         <Navbar setCurrentPage={setCurrentPage} currentPage={currentPage} role={role} />
       )}
@@ -58,7 +59,6 @@ function App() {
 
       {currentPage !== 'auth' && <Footer />}
 
-      {/* Floating Chatbot only for consumers */}
       {role === 'consumer' && currentPage !== 'auth' && <Chatbot />}
     </div>
   );
