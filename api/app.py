@@ -1,5 +1,7 @@
-from flask import Flask
+from flask import Flask, jsonify
+from flask import request
 import diff_data
+import location_color as lc
 
 app = Flask(__name__)
 
@@ -23,3 +25,12 @@ def diffs(id):
 @app.route("/keys")
 def keys_route():
     return keys
+
+@app.route("/color", methods=['POST'])
+def give_color() :
+    json_data = request.get_json()  # parse JSON body
+    if not json_data or "time" not in json_data:
+        return jsonify({"error": "Missing 'time' field"}), 400
+
+    time_value = json_data["time"]
+    return lc.get_color_json(data, str(time_value))
