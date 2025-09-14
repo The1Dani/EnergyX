@@ -8,7 +8,6 @@ const SearchPage = () => {
   const [cityData, setCityData] = useState({});
   const [loading, setLoading] = useState(true);
 
-  // Center of Moldova as default map center
   const defaultPosition = [47.0, 28.5];
   const zoom = 7;
 
