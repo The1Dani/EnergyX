@@ -19,29 +19,25 @@ import openai
 import os
 import json
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'api')))
 from diff_data import get_timed_diffs
 
 # Set your OpenAI API key here or via environment variable OPENAI_API_KEY
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
 # System prompt for provider recommendations
 SYSTEM_PROMPT = (
 	"You are an expert energy grid operator. "
 	"Given the latest energy data for each location, generate 4 recommendations for grid management. "
 	"For each, generate a catchy, attention-grabbing title (e.g. 'Chișinău on the Brink!', 'Orhei's Solar Surge', 'Balti: Demand Spike Alert') and a one-sentence recommendation for that location. "
 	"Format each as: Title\nRecommendation\n."
+	"Dont use any kind of markdown"
+	"Use simple UTF-8 plaintext"
 )
 
 
 # Summarize energy data by location
-def get_location_energy_data():
-	DATA_PATH = os.path.join(os.path.dirname(__file__), '../data/data.json')
-	METER_MAP_PATH = os.path.join(os.path.dirname(__file__), '../data/daniel_data/meter_to_location.json')
-	with open(DATA_PATH, encoding='utf-8') as f:
-		data = json.load(f)
-	with open(METER_MAP_PATH, encoding='utf-8') as f:
-		location_to_meters = json.load(f)
+def get_location_energy_data(data, location_to_meters):
+	
 	time = "08.06.2025 12:00:00"
 	location_energy = {}
 	for location, meters in location_to_meters.items():

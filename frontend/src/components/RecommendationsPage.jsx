@@ -1,54 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./RecommendationsPage.css";
 
-const RecommendationsPage = () => (
-  <section id="recommendations" className="page-section py-5">
-    <div className="container">
-      <h2 className="section-title text-center">Recommendations</h2>
+const RecommendationsPage = () => {
+  const [recommendations, setRecommendations] = useState([]);
 
-      <div className="recommendations-grid">
-        <div className="alert-card">
-          <h4 className="alert-title">
-            <i className="bi bi-exclamation-triangle-fill text-danger"></i>
-            Hîncești exceeded safe limits
-          </h4>
-          <p>
-            Activate the Bozieni power station for 3 hours to reduce pressure on the grid.
-          </p>
-        </div>
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/ai");
+        const data = await response.json();
+        setRecommendations(data);
+      } catch (error) {
+        console.error("Error fetching recommendations:", error);
+      }
+    };
 
-        <div className="alert-card">
-          <h4 className="alert-title">
-            <i className="bi bi-activity text-warning"></i>
-            Rising demand in Orhei
-          </h4>
-          <p>
-            Consider enabling backup energy sources for this evening.
-          </p>
-        </div>
+    fetchRecommendations();
+  }, []);
 
-        <div className="alert-card">
-          <h4 className="alert-title">
-            <i className="bi bi-lightning-fill text-primary"></i>
-            High load in Chișinău
-          </h4>
-          <p>
-            Schedule demand response actions to balance peak hours.
-          </p>
-        </div>
+  return (
+    <section id="recommendations" className="page-section py-5">
+      <div className="container">
+        <h2 className="section-title text-center">Recommendations</h2>
 
-        <div className="alert-card">
-          <h4 className="alert-title">
-            <i className="bi bi-sun-fill text-success"></i>
-            Solar capacity available
-          </h4>
-          <p>
-            Favor renewable integration in the grid during the next 3 sunny days.
-          </p>
+        <div className="recommendations-grid">
+          {recommendations.map((rec, index) => (
+            <div key={index} className="alert-card">
+              <h4 className="alert-title">
+                <i
+                  className={`bi ${
+                    index % 4 === 0
+                      ? "bi-exclamation-triangle-fill text-danger"
+                      : index % 4 === 1
+                      ? "bi-activity text-warning"
+                      : index % 4 === 2
+                      ? "bi-lightning-fill text-primary"
+                      : "bi-sun-fill text-success"
+                  }`}
+                ></i>{" "}
+                {rec.title.replace(/^Title:\s*/, "")}
+              </h4>
+              <p>{rec.recommendation.replace(/^Recommendation:\s*/, "")}</p>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default RecommendationsPage;

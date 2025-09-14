@@ -28,33 +28,46 @@ const ProviderDashboard = ({ setCurrentPage }) => {
   const [loading, setLoading] = useState(true);
 
   const regions = [
-    "Bălți",
+    "Balti",
     "Cahul",
-    "Chișinău",
+    "Chisinau",
     "Comrat",
     "Cricova",
-    "Edineț",
-    "Florești",
-    "Hîncești",
+    "Edinet",
+    "Floresti",
+    "Hincesti",
     "Orhei",
     "Rezina",
     "Soroca",
-    "Ștefan Vodă",
+    "Stefan Voda",
     "Tiraspol",
     "Ungheni",
-    "Vadul lui Vodă",
+    "Vadul lui Voda",
   ];
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // assumes backend API returns something like:
-        // { hours: ["00","01","02",...], consumption: [120, 135, ...] }
-        const response = await fetch(`http://localhost:5000/region/${region}`);
+        const response = await fetch(`http://localhost:5000/region/all`);
         const result = await response.json();
+        console.log(result)
 
-        setConsumptionData(result.consumption || []);
+        // Extract data for the selected region
+        const regionData = result[0][region] || {};
+        console.log(regionData)
+
+        // Convert object with timestamps to array of Export values
+        const dataArray = Object.entries(regionData)
+          // Optional: filter to full hours (MM:SS = "00:00")
+          .filter(([timestamp]) => timestamp.slice(14, 19) === "00:00")
+          .map(([timestamp, values]) => ({
+            timestamp,
+            export: values.Export,
+            import: values.Import,
+          }));
+        console.log(dataArray)
+        setConsumptionData(dataArray);
       } catch (error) {
         console.error("Error fetching region data:", error);
         setConsumptionData([]);
@@ -66,18 +79,25 @@ const ProviderDashboard = ({ setCurrentPage }) => {
     fetchData();
   }, [region]);
 
-  const labels = Array.from({ length: 24 }, (_, i) =>
-    i.toString().padStart(2, "0")
-  );
+  // Use timestamps as labels
+  const labels = consumptionData.map((d) => d.timestamp);
 
   const data = {
     labels,
     datasets: [
       {
-        label: `${region} Consumption (MW)`,
-        data: consumptionData.length > 0 ? consumptionData : Array(24).fill(0),
+        label: `${region} Export (KW)`,
+        data: consumptionData.map((d) => d.export),
         borderColor: "#004aad",
         backgroundColor: "rgba(0, 74, 173, 0.2)",
+        tension: 0.3,
+        fill: true,
+      },
+      {
+        label: `${region} Import (KW)`,
+        data: consumptionData.map((d) => d.import),
+        borderColor: "#ff5a5f",
+        backgroundColor: "rgba(255, 90, 95, 0.2)",
         tension: 0.3,
         fill: true,
       },
@@ -88,11 +108,11 @@ const ProviderDashboard = ({ setCurrentPage }) => {
     responsive: true,
     plugins: {
       legend: { position: "top" },
-      title: { display: true, text: "Hourly Consumption" },
+      title: { display: true, text: "Region Energy Flow" },
     },
     scales: {
-      y: { title: { display: true, text: "MW" }, beginAtZero: true },
-      x: { title: { display: true, text: "Hour" } },
+      y: { title: { display: true, text: "KW" }, beginAtZero: true },
+      x: { title: { display: true, text: "Time" } },
     },
   };
 
@@ -112,25 +132,21 @@ const ProviderDashboard = ({ setCurrentPage }) => {
 
         <div className="card dashboard-card">
           <i className="bi bi-lightning-charge display-6 text-warning"></i>
-          <h5>Current Usage</h5>
+          <h5>Current Export</h5>
           <p className="fw-bold">
             {consumptionData.length > 0
-              ? `${consumptionData[consumptionData.length - 1]} MW`
+              ? `${consumptionData[consumptionData.length - 1].export} KW`
               : "N/A"}
           </p>
         </div>
 
         <div className="card dashboard-card">
-          <i className="bi bi-house display-6 text-success"></i>
-          <h5>Smart Meters</h5>
-          <p className="fw-bold">12,458</p>
-        </div>
-
-        <div className="card dashboard-card">
-          <i className="bi bi-diagram-3 display-6 text-danger"></i>
-          <h5>Grid Balance</h5>
+          <i className="bi bi-lightning-charge-fill display-6 text-danger"></i>
+          <h5>Current Import</h5>
           <p className="fw-bold">
-            {consumptionData.length > 0 ? "Stable" : "Unknown"}
+            {consumptionData.length > 0
+              ? `${consumptionData[consumptionData.length - 1].import} KW`
+              : "N/A"}
           </p>
         </div>
       </div>

@@ -2,8 +2,11 @@ from flask import Flask, jsonify
 from flask import request
 from flask_cors import CORS
 import diff_data
+import aiProvider
 
 GAUSS_LOOKUP = [425, 428.29, 500, 428.29, 425]
+CALC_DATA_JSON = "/opt/data/calc.json"
+METER_TO_LOCATION = "/opt/data/daniel_data/meter_to_location.json"
 
 app = Flask(__name__)
 CORS(app)
@@ -15,6 +18,16 @@ with open(diff_data.DATA_JSON_FILE) as json_file:
     data:dict = json.load(json_file)
 
 keys = list(data.keys())
+
+calc_data = {}
+with open(CALC_DATA_JSON) as json_file:
+    calc_data:dict = json.load(json_file)
+
+meter_data = {}
+with open(METER_TO_LOCATION) as json_file:
+    meter_data:dict = json.load(json_file)
+
+ai_data = aiProvider.get_location_energy_data(data, meter_data)
 
 @app.route("/id/<id>")
 def hello(id):
@@ -54,3 +67,11 @@ def give_color() :
 
     time_value = json_data["time"]
     return diff_data.get_color_json(data, str(time_value))
+
+@app.route("/region/all")
+def get_regions():
+    return calc_data
+
+@app.route("/ai")
+def get_ai_resp():
+    return aiProvider.get_ai_recommendations(ai_data)

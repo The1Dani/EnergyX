@@ -33,17 +33,36 @@ const HourlyConsumption = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/id/${userId}`);
+        const response = await fetch(`http://localhost:5000/diff/${userId}`);
         const result = await response.json();
-        console.log("Fetched consumption data:", result);
+
+        const today = result.filter(x => 
+          ["2025-06-08"].includes(x["Date of Second Val"].split(" ")[0]) && x["Date of Second Val"].endsWith("00:00")
+        )
+        console.log(today)
+        let t_arr = today.map(x => x["Import Delta"])
+        t_arr = t_arr.concat(Array(25 - t_arr.length).fill(t_arr[t_arr.length - 1] + 1));
+
+        const yesterday = result.filter(x => 
+          ["2025-06-07"].includes(x["Date of Second Val"].split(" ")[0]) && x["Date of Second Val"].endsWith("00:00")
+        )
+        let y_arr = yesterday.map(x => x["Import Delta"])
+        y_arr = y_arr.concat(Array(25 - y_arr.length).fill(y_arr[y_arr.length - 1] + 1));
+
+
+
+
+        console.log("Fetched consumption data:", t_arr, y_arr);
 
         // Asum că backend-ul întoarce:
         // { yesterday: [...], today: [...], tomorrow: [...] }
-        setConsumptionData({
-          Yesterday: result.yesterday || [],
-          Today: result.today || [],
-          Tomorrow: result.tomorrow || [],
-        });
+       
+      setConsumptionData({
+        Yesterday: y_arr,
+        Today: t_arr,
+        Tomorrow: [], // keep empty until you add backend logic for it
+      });
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
