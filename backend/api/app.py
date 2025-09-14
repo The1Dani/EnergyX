@@ -6,6 +6,8 @@ import aiProvider
 import aiCustomer
 import os
 import openai
+import model.xlstm_runner
+from model.xlstm_runner import m_eval
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.OpenAI(api_key=OPENAI_API_KEY)
@@ -109,3 +111,11 @@ def chat_q():
 @app.route("/consumptions")
 def give_consumption():
     return consumption_data
+
+@app.route("/pred/week")
+def w_pred():
+    return m_eval(week=True)
+
+@app.route("/pred")
+def pred():
+    return m_eval()
