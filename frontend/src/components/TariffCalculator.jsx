@@ -22,7 +22,7 @@ ChartJS.register(
   Legend
 );
 
-function gaussian(x, mean, sigma = 3) {
+function gaussian(x, mean, sigma = 2) {
   return Math.exp(-0.5 * Math.pow((x - mean) / sigma, 2));
 }
 
@@ -60,7 +60,15 @@ function TariffCalculator() {
   const labels = Array.from({ length: 25 }, (_, i) =>
     i.toString().padStart(2, "0")
   );
-  const values = labels.map((h) => gaussian(parseInt(h), hour));
+
+  // Two Gaussian peaks: morning (center ~9h), evening (center ~19h)
+  const values = labels.map((h) => {
+    const x = parseInt(h);
+    const morningPeak = gaussian(x, 9, 2);  // 7–11
+    const eveningPeak = gaussian(x, 19, 2.5); // 17–22
+    return morningPeak + eveningPeak;
+  });
+
   const maxVal = Math.max(...values);
   const scaledValues = values.map((v) => (v / maxVal) * 100);
 
@@ -68,7 +76,7 @@ function TariffCalculator() {
     labels,
     datasets: [
       {
-        label: `Consumption distribution (peak at ${hour}:00)`,
+        label: "Consumption distribution (two peaks)",
         data: scaledValues,
         borderColor: "#004aad",
         backgroundColor: "rgba(0, 74, 173, 0.2)",
@@ -135,12 +143,11 @@ function TariffCalculator() {
       <div className="description-box">
         <h4>How to read this chart</h4>
         <p>
-          The blue curve represents electricity consumption during the day,
-          with the highest point showing the selected peak hour.
-          By moving the slider, you can shift the peak to see how
-          changing consumption patterns affect your estimated cost.
-          The cost value is fetched live from the backend tariff service
-          for the selected <b>hour</b>.
+          The blue curve shows daily electricity consumption with{" "}
+          <b>two peaks</b>: one in the <b>morning (7–11)</b> and another in the{" "}
+          <b>evening (17–22)</b>. These are modeled with Gaussian distributions.  
+          The slider still fetches the estimated cost for the selected{" "}
+          <b>hour</b> from the backend.
         </p>
       </div>
     </div>

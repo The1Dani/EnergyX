@@ -1,5 +1,5 @@
 .smart-house-container {
-  max-width: 700px;
+  max-width: 800px;
   margin: 40px auto;
   padding: 20px;
   font-family: "Segoe UI", Arial, sans-serif;
@@ -9,22 +9,36 @@
   text-align: center;
 }
 
-.title {
-  font-size: 1.8rem;
-  color: #004aad;
-  margin-bottom: 8px;
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
 }
 
-.subtitle {
-  font-size: 1.1rem;
-  margin-bottom: 20px;
+.controls div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.controls input[type="number"] {
+  width: 80px;
+  padding: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.controls input[type="checkbox"] {
+  transform: scale(1.3);
 }
 
 .devices-grid {
   display: flex;
   justify-content: center;
-  gap: 40px;
-  margin-bottom: 20px;
+  gap: 30px;
+  margin-top: 20px;
   flex-wrap: wrap;
 }
 
@@ -32,14 +46,9 @@
   background: white;
   padding: 16px;
   border-radius: 12px;
-  width: 150px;
+  width: 170px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   text-align: center;
-  transition: transform 0.2s ease;
-}
-
-.device-card:hover {
-  transform: translateY(-3px);
 }
 
 .bulb {
@@ -47,7 +56,6 @@
   height: 50px;
   margin: 0 auto 12px;
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
 }
 
 .bulb.on {
@@ -60,26 +68,10 @@
   box-shadow: 0 0 10px #d9534f;
 }
 
-.toggle-btn {
-  margin-top: 8px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 6px;
-  background-color: #004aad;
-  color: white;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.toggle-btn:hover {
-  background-color: #003377;
-}
-
 .note {
   margin-top: 20px;
-  font-size: 0.9rem;
-  color: #333;
+  font-size: 0.95rem;
+  text-align: left;
   background: #eef5ff;
   padding: 12px;
   border-radius: 8px;
