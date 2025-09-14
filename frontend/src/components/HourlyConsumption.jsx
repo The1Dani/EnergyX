@@ -36,7 +36,9 @@ const HourlyConsumption = () => {
         const response = await fetch(`http://localhost:5000/diff/${userId}`);
         const result = await response.json();
 
-        const today = result.filter(x => 
+        const response2= await fetch(`http://localhost:5000/pred`);
+        const result2= await response2.json()
+        const today = result.filter(x =>   
           ["2025-06-08"].includes(x["Date of Second Val"].split(" ")[0]) && x["Date of Second Val"].endsWith("00:00")
         )
         console.log(today)
@@ -49,9 +51,6 @@ const HourlyConsumption = () => {
         let y_arr = yesterday.map(x => x["Import Delta"])
         y_arr = y_arr.concat(Array(25 - y_arr.length).fill(y_arr[y_arr.length - 1] + 1));
 
-
-
-
         console.log("Fetched consumption data:", t_arr, y_arr);
 
         // Asum că backend-ul întoarce:
@@ -60,7 +59,7 @@ const HourlyConsumption = () => {
       setConsumptionData({
         Yesterday: y_arr,
         Today: t_arr,
-        Tomorrow: [], // keep empty until you add backend logic for it
+        Tomorrow: result2, // keep empty until you add backend logic for it
       });
 
       } catch (error) {
