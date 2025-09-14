@@ -3,10 +3,17 @@ from flask import request
 from flask_cors import CORS
 import diff_data
 import aiProvider
+import aiCustomer
+import os
+import openai
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 GAUSS_LOOKUP = [425, 428.29, 500, 428.29, 425]
 CALC_DATA_JSON = "/opt/data/calc.json"
 METER_TO_LOCATION = "/opt/data/daniel_data/meter_to_location.json"
+TOTAL_CONSUMPTION_JSON = "/opt/data/daniel_data/location_total_consumption.json"
 
 app = Flask(__name__)
 CORS(app)
@@ -18,6 +25,12 @@ with open(diff_data.DATA_JSON_FILE) as json_file:
     data:dict = json.load(json_file)
 
 keys = list(data.keys())
+
+consumption_data = {}
+# Opening JSON file
+with open(TOTAL_CONSUMPTION_JSON) as json_file:
+    consumption_data:dict = json.load(json_file)
+
 
 calc_data = {}
 with open(CALC_DATA_JSON) as json_file:
@@ -50,14 +63,22 @@ def keys_route():
 
 @app.route("/tarrif/<hour>")
 def tarrif(hour):
+    print(hour, type(hour))
+    try:
+        hour = int(hour)
+    except Exception:
+        return jsonify({"error": "error"}), 400
+
+    
     if 7 <= hour <= 11:
         hour -= 7
-        return GAUSS_LOOKUP[hour]
+        return {"price": GAUSS_LOOKUP[hour]}
     if 18 <= hour <= 22:
         hour -= 18
-        return GAUSS_LOOKUP[hour]
+        return {"price": GAUSS_LOOKUP[hour]}
 
-    return GAUSS_LOOKUP[2]
+    return {"price": GAUSS_LOOKUP[2]}
+
 
 @app.route("/color", methods=['POST'])
 def give_color() :
@@ -74,4 +95,17 @@ def get_regions():
 
 @app.route("/ai")
 def get_ai_resp():
-    return aiProvider.get_ai_recommendations(ai_data)
+    return aiProvider.get_ai_recommendations(client, ai_data)
+
+@app.route("/ai/chat", methods=['POST'])
+def chat_q():
+    json_data = request.get_json()  # parse JSON body
+    if not json_data or "message" not in json_data:
+        return jsonify({"error": "Missing 'message' field"}), 400
+    
+    message = json_data["message"]
+    return {"response": aiCustomer.get_ai_response(client, message)}
+
+@app.route("/consumptions")
+def give_consumption():
+    return consumption_data

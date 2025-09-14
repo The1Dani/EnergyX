@@ -24,14 +24,14 @@ function HomePage({ openMenu }) {
             <div className="col-md-3">
               <div className="stat-card shadow-sm p-4">
                 <i className="bi bi-lightning-charge text-primary mb-2"></i>
-                <h3 className="fw-bold">245 MW</h3>
+                <h3 className="fw-bold">11,756 MW</h3>
                 <p>Current Usage</p>
               </div>
             </div>
             <div className="col-md-3">
               <div className="stat-card shadow-sm p-4">
                 <i className="bi bi-house text-success mb-2"></i>
-                <h3 className="fw-bold">12,458</h3>
+                <h3 className="fw-bold">11,871</h3>
                 <p>Smart Homes Connected</p>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import "./TariffCalculator.css";
 import {
@@ -27,18 +27,42 @@ function gaussian(x, mean, sigma = 3) {
 }
 
 function TariffCalculator() {
-  const [hour, setHour] = useState(18); 
+  const [hour, setHour] = useState(18);
+  const [currentCost, setCurrentCost] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const previousCost = 1200;
 
+  // Fetch current cost from backend
+  useEffect(() => {
+    const fetchTariff = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`http://localhost:5000/tarrif/${hour}`);
+        const result = await response.json();
+        if (result && typeof result.price === "number") {
+          setCurrentCost(result.price);
+        } else {
+          setCurrentCost(null);
+        }
+      } catch (err) {
+        console.error("Error fetching tariff:", err);
+        setCurrentCost(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTariff();
+  }, [hour]);
+
+  // Chart data
   const labels = Array.from({ length: 25 }, (_, i) =>
     i.toString().padStart(2, "0")
   );
   const values = labels.map((h) => gaussian(parseInt(h), hour));
-
   const maxVal = Math.max(...values);
   const scaledValues = values.map((v) => (v / maxVal) * 100);
-
-  const currentCost = Math.max(300, previousCost - Math.abs(hour - 17) * 50);
 
   const data = {
     labels,
@@ -56,7 +80,7 @@ function TariffCalculator() {
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, 
+    maintainAspectRatio: false,
     plugins: {
       legend: { display: true },
       title: { display: false },
@@ -99,20 +123,24 @@ function TariffCalculator() {
           <strong>Previous Cost:</strong> {previousCost} MDL
         </p>
         <p>
-          <strong>Estimated Current Cost:</strong> {currentCost} MDL
+          <strong>Estimated Current Cost:</strong>{" "}
+          {loading
+            ? "Loading..."
+            : currentCost !== null
+            ? `${currentCost} MDL`
+            : "Error fetching"}
         </p>
       </div>
 
       <div className="description-box">
         <h4>How to read this chart</h4>
         <p>
-          The blue curve represents electricity consumption during the day, 
-          with the highest point showing the selected peak hour. 
-          By moving the slider, you can shift the peak to see how 
-          changing consumption patterns affect your estimated cost. 
-          When the peak hour moves closer to <b>17:00</b>, 
-          your cost decreases. If the peak is further away, 
-          the cost increases, reflecting higher energy demand during off-peak times.
+          The blue curve represents electricity consumption during the day,
+          with the highest point showing the selected peak hour.
+          By moving the slider, you can shift the peak to see how
+          changing consumption patterns affect your estimated cost.
+          The cost value is fetched live from the backend tariff service
+          for the selected <b>hour</b>.
         </p>
       </div>
     </div>

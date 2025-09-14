@@ -22,8 +22,7 @@ import sys
 from diff_data import get_timed_diffs
 
 # Set your OpenAI API key here or via environment variable OPENAI_API_KEY
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = openai.OpenAI(api_key=OPENAI_API_KEY)
+
 # System prompt for provider recommendations
 SYSTEM_PROMPT = (
 	"You are an expert energy grid operator. "
@@ -54,7 +53,7 @@ def get_location_energy_data(data, location_to_meters):
 
 
 
-def get_ai_recommendations(energy_data: dict, model: str = "gpt-3.5-turbo") -> list:
+def get_ai_recommendations(client, energy_data: dict, model: str = "gpt-3.5-turbo") -> list:
 	# Prepare a summary for the AI
 	summary = "Energy summary for locations at 08.06.2025 12:00:00:\n"
 	for location, vals in energy_data.items():

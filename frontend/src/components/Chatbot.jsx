@@ -7,13 +7,38 @@ function Chatbot() {
     { from: "bot", text: "Hi! I’m your energy assistant ⚡ How can I help?" }
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (input.trim() === "") return;
+
     const userMsg = { from: "user", text: input };
-    const botMsg = { from: "bot", text: "Here’s a recommendation based on your usage 🔋" };
-    setMessages([...messages, userMsg, botMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/ai/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: input }),
+      });
+
+      const result = await response.json();
+      // assume backend responds with { reply: "text" }
+      const botMsg = { from: "bot", text: result.response || "Sorry, I didn't understand that." };
+      setMessages((prev) => [...prev, botMsg]);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      const botMsg = { from: "bot", text: "⚠️ Error contacting server." };
+      setMessages((prev) => [...prev, botMsg]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") handleSend();
   };
 
   return (
@@ -26,7 +51,6 @@ function Chatbot() {
         <div className="chat-window">
           <div className="chat-header">
             <h5 className="chat-title">Energy Assistant</h5>
-           
           </div>
 
           <div className="chat-body">
@@ -35,12 +59,18 @@ function Chatbot() {
                 {msg.text}
               </div>
             ))}
+            {loading && (
+              <div className="chat-msg bot">
+                Typing...
+              </div>
+            )}
           </div>
 
           <div className="chat-input">
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Type a message..."
             />
             <button className="send-btn" onClick={handleSend}>

@@ -19,8 +19,7 @@ import os
 
 
 # Set your OpenAI API key here or via environment variable OPENAI_API_KEY
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = openai.OpenAI(api_key=OPENAI_API_KEY)
+
 
 # System prompt to define AI's role and response style
 SYSTEM_PROMPT = (
@@ -30,7 +29,7 @@ SYSTEM_PROMPT = (
 	"Avoid technical jargon and keep your advice easy to understand.(Dont repeat yourself)"
 )
 
-def get_ai_response(prompt: str, model: str = "gpt-3.5-turbo") -> str:
+def get_ai_response(client, prompt: str, model: str = "gpt-3.5-turbo") -> str:
 	"""
 	Sends a prompt to OpenAI with a system message and returns the response as a string.
 	"""
